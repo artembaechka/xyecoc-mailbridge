@@ -1,4 +1,4 @@
-# Ксайкок mailbridge
+# [Ксайкок](https://xyecoc.com) mailbridge
 
 ⚠️ AI warning. Vibecoded trash for personal use only, provided as-is
 
