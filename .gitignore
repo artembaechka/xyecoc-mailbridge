@@ -1,0 +1,4 @@
+/mailbridge
+/mailbridge.exe
+*.exe
+.env

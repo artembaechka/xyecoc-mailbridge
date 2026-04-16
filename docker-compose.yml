@@ -1,0 +1,39 @@
+services:
+  mailbridge:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: xyecoc-mailbridge:local
+    container_name: mailbridge
+    restart: unless-stopped
+    ports:
+      # На Linux для портов <1024 может понадобиться root или смените на "1143:143" / "1587:587"
+      - "143:143"
+      - "587:587"
+    environment:
+      # POST /request — API-хост (cdn даёт unknown_service для account/*)
+      REMOTE_HTTP_BASE: ${REMOTE_HTTP_BASE:-https://api.xyecoc.com}
+      # Опционально: GET /mail/... и /data/attachments/mails/... на CDN (приоритет для вложений), иначе тот же REMOTE_HTTP_BASE.
+      REMOTE_ASSET_BASE: ${REMOTE_ASSET_BASE:-https://cdn.xyecoc.com}
+      # Пусто = не дописывать @домен к логину. REMOTE_AUTH: в API уходит только локальная часть (baechka).
+      MAIL_DEFAULT_DOMAIN: ${MAIL_DEFAULT_DOMAIN:-}
+      REMOTE_AUTH_EMAIL_LOCAL_PART_ONLY: ${REMOTE_AUTH_EMAIL_LOCAL_PART_ONLY:-true}
+      MAILBRIDGE_LANG: ${MAILBRIDGE_LANG:-ru}
+      # currentLang для mail/default — в вебе обычно "inbox" (даже для trash), не ru
+      MAILBRIDGE_MAIL_CURRENT_LANG: ${MAILBRIDGE_MAIL_CURRENT_LANG:-inbox}
+      # currentLang для mail/view (открытие письма)
+      MAILBRIDGE_MAIL_VIEW_LANG: ${MAILBRIDGE_MAIL_VIEW_LANG:-mail}
+      # currentLang для SMTP отправки / ответа (как в веб-клиенте при compose)
+      MAILBRIDGE_MAIL_COMPOSE_LANG: ${MAILBRIDGE_MAIL_COMPOSE_LANG:-mail}
+      IMAP_ADDR: ":143"
+      # Иначе go-imap не объявляет AUTH=PLAIN без TLS → «Authentication disabled» при LOGIN
+      IMAP_ALLOW_INSECURE_AUTH: ${IMAP_ALLOW_INSECURE_AUTH:-true}
+      SMTP_ADDR: ":587"
+      HTTP_TIMEOUT_SEC: ${HTTP_TIMEOUT_SEC:-60}
+      MAX_MAIL_LIST: ${MAX_MAIL_LIST:-5000}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      # true = построчный лог IMAP/SMTP (STORE/DELETE/EXPUNGE видно в логах)
+      MAILBRIDGE_PROTOCOL_LOG: ${MAILBRIDGE_PROTOCOL_LOG:-false}
+    # Раскомментируйте для переопределения из файла:
+    env_file:
+      - .env
