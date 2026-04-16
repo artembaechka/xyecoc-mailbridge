@@ -1,5 +1,7 @@
 # Ксайкок mailbridge
 
+⚠️ AI warning. Vibecoded trash for personal use only, provided as-is
+
 Прокси **IMAP** и **SMTP submission** к почтовому HTTP API в стиле xyecoc: те же JSON-тела, что у веб-клиента (`POST /request`, событие `request` в Socket.IO). Процесс слушает **обычный TCP**; TLS обычно терминируется на reverse proxy.
 
 ## Возможности
